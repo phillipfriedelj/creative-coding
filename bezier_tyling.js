@@ -4,91 +4,140 @@ let step = 1;
 let slider;
 let oldSliderValue;
 
-function drawBezierLine(x, y, width, height) {
-  console.log("BL -- X: ", x, " -- Y: ", y);
+let colorPalettes = [
+  ["#ccd5ae", "#e9edc9", "#faedcd", "#d4a373"],
+  ["#606c38", "#283618", "#fefae0", "#dda15e", "#bc6c25"],
+  ["#e63946", "#f1faee", "#a8dadc", "#457b9d", "#1d3557"],
+  ["#f6bd60", "#f7ede2", "#f5cac3", "#84a59d", "#f28482"],
+  [
+    "#001219",
+    "#005f73",
+    "#0a9396",
+    "#94d2bd",
+    "#e9d8a6",
+    "#ee9b00",
+    "#ca6702",
+    "#bb3e03",
+    "#ae2012",
+    "#9b2226",
+  ],
+];
 
+function drawQuadraticVertex(startX, startY, endX, endY, anchorX, anchorY) {
+  //   fill("white");
+  beginShape();
+  //   stroke("rgba(0%, 0%, 100%, 0.75)");
+
+  vertex(startX, startY);
+  quadraticVertex(anchorX, anchorY, endX, endY);
+  endShape();
+}
+
+function drawBezierLine(
+  startX,
+  startY,
+  endX,
+  endY,
+  anchor1X,
+  anchor1Y,
+  anchor2X,
+  anchor2Y
+) {
+  beginShape();
+  //   stroke("rgba(100%, 0%, 0%, 0.75)");
+  vertex(startX, startY);
+  bezierVertex(anchor1X, anchor1Y, anchor2X, anchor2Y, endX, endY);
+  endShape();
+}
+
+function drawTile(x, y, width, height, colorPalette) {
   strokeWeight(1);
   let direction = random() >= 0.5 ? "left" : "right";
-  //console.log("DIRE :: ", direction)
 
   noFill();
-  // Draw the curve.
+  let randColor = colorPalette[floor(random(0, colorPalette.length))];
   beginShape();
 
-  //   vertex(x, y);
   let startPointX;
   let startPointY;
-  let bezPointX;
-  let bezPointY;
+  let bezPointX1;
+  let bezPointX2;
+  let bezPointY1;
+  let bezPointY2;
   let endPointX;
   let endPointY;
 
-  //   quadraticVertex(endPointX, endPointY, bezPointX, bezPointY);
-  //   vertex(endPointX, endPointY);
-  stroke("blue");
+  stroke(randColor);
+  //   stroke("blue");
 
   if (direction === "left") {
     startPointX = x * width;
     startPointY = y * height;
-    let xStart = x * width;
-    let xEnd = (x + 1) * width;
-    let yStart = y * height;
-    let yEnd = (y + 1) * height;
-    bezPointX = random(xStart, xEnd);
-    bezPointY = random(yStart, yEnd);
+    let startX = x * width;
+    let endX = (x + 1) * width;
+    let startY = y * height;
+    let endY = (y + 1) * height;
+    bezPointX1 = random(startX, endX);
+    bezPointY1 = random(startY, endY);
+    bezPointX2 = random(startX, endX);
+    bezPointY2 = random(startY, endY);
     endPointX = startPointX + width;
     endPointY = startPointY + height;
 
-    console.log("X::START  --", xStart, " -- ", xEnd);
-    console.log("Y::START  --", yStart, " -- ", yEnd);
-    //   console.log("BEZ POINT --", bezPointX, "|", bezPointY);
+    // drawQuadraticVertex(
+    //   startPointX,
+    //   startPointY,
+    //   endPointX,
+    //   endPointY,
+    //   bezPointX1,
+    //   bezPointY1
+    // );
 
-    vertex(startPointX, startPointY);
-    //   vertex(endPointX, endPointY);
-    quadraticVertex(bezPointX, bezPointY, endPointX, endPointY);
-    // startPointX = x;
-    // startPointY = y;
-    // bezPointX = (x + 1) * width;
-    // bezPointY = (y + 1) * (height / 2);
-    // endPointX = x + width;
-    // endPointY = y + height;
-
-    // vertex(x, y);
-    // // vertex(endPointX, endPointY);
-    // quadraticVertex(bezPointX, bezPointY, endPointX, endPointY);
+    drawBezierLine(
+      startPointX,
+      startPointY,
+      endPointX,
+      endPointY,
+      bezPointX1,
+      bezPointY1,
+      bezPointX2,
+      bezPointY2
+    );
   } else {
-    startPointX = x * width;
-    startPointY = y * height + height;
-    let xStart = x * width;
-    let xEnd = (x + 1) * width;
-    let yStart = y * height;
-    let yEnd = (y + 1) * height;
-    bezPointX = random(xStart, xEnd);
-    bezPointY = random(yStart, yEnd);
-    endPointX = startPointX + width;
-    endPointY = y * height;
+    startPointX = x * width + width;
+    startPointY = y * height;
+    let startX = x * width;
+    let endX = (x + 1) * width;
+    let startY = y * height;
+    let endY = (y + 1) * height;
+    bezPointX1 = random(startX, endX);
+    bezPointY1 = random(startY, endY);
+    bezPointX2 = random(startX, endX);
+    bezPointY2 = random(startY, endY);
+    endPointX = startPointX - width;
+    endPointY = startPointY + height;
 
-    console.log("X::START  --", xStart, " -- ", xEnd);
-    console.log("Y::START  --", yStart, " -- ", yEnd);
-    //   console.log("BEZ POINT --", bezPointX, "|", bezPointY);
+    drawBezierLine(
+      startPointX,
+      startPointY,
+      endPointX,
+      endPointY,
+      bezPointX1,
+      bezPointY1,
+      bezPointX2,
+      bezPointY2
+    );
 
-    vertex(startPointX, startPointY);
-    //   vertex(endPointX, endPointY);
-    quadraticVertex(bezPointX, bezPointY, endPointX, endPointY);
-
-    // startPointX = x;
-    // startPointY = y + height;
-    // bezPointX = width / 2;
-    // bezPointY = y;
-    // endPointX = x + width;
-    // endPointY = y;
-
-    // vertex(startPointX, startPointY);
-    // // vertex(endPointX, endPointY);
-    // quadraticVertex(bezPointX, bezPointY, endPointX, endPointY);
-    // // quadraticVertex(random(x, x + width), random(y, y + height), x, y);
+    // drawQuadraticVertex(
+    //   startPointX,
+    //   startPointY,
+    //   endPointX,
+    //   endPointY,
+    //   bezPointX1,
+    //   bezPointY1
+    // );
   }
-  endShape();
+
   //   stroke("black");
   //   line(x + width, y, x, y + height);
 
@@ -100,38 +149,33 @@ function drawBezierLine(x, y, width, height) {
   //   point(bezPointX, bezPointY);
 }
 
-function drawRect(x, y, width, height) {
-  let direction = random() >= 0.5 ? "left" : "right";
-  //console.log("DIRE :: ", direction)
-
-  if (direction === "left") {
-    rect(x + width, y + height, x + width, y + height);
-    //console.log("L-FROM: ", x, "|", y, " TO: ", x + width, "|", y + height)
-  } else {
-    rect(x + width, y, x, y + height);
-    //console.log("R-FROM: ", x + width, "|", y, " TO: ", x, "|", y + height)
-  }
-}
-
 function setup() {
+  colorMode(HSL);
   createCanvas(size, size);
-  background("#aec4e6");
+  background("white");
   stroke("white");
   strokeWeight(3);
 
-  slider = createSlider(3, 100, 20, 1);
-  slider.position(10, 10);
-  slider.size(80);
+  //   slider = createSlider(3, 100, 20, 1);
+  //   slider.position(10, 10);
+  //   slider.size(80);
 
   //   step = slider.value();
-  steps = 50;
+  //   steps = random(10, 150);
+  let steps = 150;
   stepSizeX = width / steps;
   stepSizeY = height / steps;
 
+  //   let colors = colorPalettes[floor(random(0, colorPalettes.length))];
+  //   let colors = ["#00072d", "#001c55", "#0a2472", "#0e6ba8", "#a6e1fa"];
+  //   let colors = ["#250902", "#38040e", "#640d14", "#800e13", "#ad2831"];
+  //   let colors = ["#e5d9f2", "#f5efff", "#cdc1ff", "#a594f9", "#7371fc"];
+  let colors = ["#f08080", "#f4978e", "#f8ad9d", "#fbc4ab", "#ffdab9"];
+  console.log("COLORS ", colors);
+
   for (let x = 0; x < steps; x++) {
     for (let y = 0; y < steps; y++) {
-      console.log("X: ", x, " | Y: ", y);
-      drawBezierLine(x, y, stepSizeX, stepSizeY);
+      drawTile(x, y, stepSizeX, stepSizeY, colors);
     }
   }
 }
