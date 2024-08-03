@@ -1,7 +1,7 @@
 let w = window.innerWidth - 20;
 let h = window.innerHeight - 20;
-const divisionSteps = 100;
-const minSize = 15;
+const divisionSteps = 50;
+const minSize = 10;
 
 let colorPalettes = [
   ["#ccd5ae", "#e9edc9", "#faedcd", "#d4a373"],
@@ -87,6 +87,8 @@ class Rectangle {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.stripeDirection = random() < 0.5 ? "horizontal" : "vertical";
+    this.hasStripes = random() < 0.3; // 30% chance of having stripes
   }
 
   draw(color) {
@@ -94,6 +96,38 @@ class Rectangle {
     strokeWeight(1);
     fill(color);
     rect(this.x, this.y, this.width, this.height);
+
+    if (this.hasStripes) {
+      this.addStripes(color);
+    }
+  }
+
+  addStripes(baseColor) {
+    let stripeColor = this.darkenColor(baseColor, 100);
+    let stripeWidth = 2;
+    let gap = 4;
+
+    noStroke();
+    fill(stripeColor);
+
+    if (this.stripeDirection === "horizontal") {
+      for (let y = this.y; y < this.y + this.height; y += gap) {
+        rect(this.x, y, this.width, stripeWidth);
+      }
+    } else {
+      for (let x = this.x; x < this.x + this.width; x += gap) {
+        rect(x, this.y, stripeWidth, this.height);
+      }
+    }
+  }
+
+  darkenColor(col, amount) {
+    let c = color(col);
+    return color(
+      max(red(c) - amount, 0),
+      max(green(c) - amount, 0),
+      max(blue(c) - amount, 0)
+    );
   }
 }
 
@@ -176,6 +210,7 @@ function setup() {
 
   for (let i = 0; i < rects.length; i++) {
     // console.log("RECT :: ", rects[i]);
-    rects[i].draw(palette[Math.floor(random(palette.length - 1))]);
+    let randomColor = palette[Math.floor(random(palette.length - 1))];
+    rects[i].draw(randomColor);
   }
 }

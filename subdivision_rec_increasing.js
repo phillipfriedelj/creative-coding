@@ -1,7 +1,7 @@
 let w = window.innerWidth - 20;
 let h = window.innerHeight - 20;
-const divisionSteps = 100;
-const minSize = 15;
+const divisionSteps = 500;
+const minSize = 5;
 
 let colorPalettes = [
   ["#ccd5ae", "#e9edc9", "#faedcd", "#d4a373"],
@@ -87,6 +87,8 @@ class Rectangle {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.stripeDirection = random() < 0.5 ? "horizontal" : "vertical";
+    this.hasStripes = random() < 0.3; // 30% chance of having stripes
   }
 
   draw(color) {
@@ -94,66 +96,93 @@ class Rectangle {
     strokeWeight(1);
     fill(color);
     rect(this.x, this.y, this.width, this.height);
+
+    if (this.hasStripes) {
+      this.addStripes(color);
+    }
+  }
+
+  addStripes(baseColor) {
+    let stripeColor = this.darkenColor(baseColor, 40);
+    let stripeWidth = 2;
+    let gap = 4;
+
+    noStroke();
+    fill(stripeColor);
+
+    if (this.stripeDirection === "horizontal") {
+      for (let y = this.y; y < this.y + this.height; y += gap) {
+        rect(this.x, y, this.width, stripeWidth);
+      }
+    } else {
+      for (let x = this.x; x < this.x + this.width; x += gap) {
+        rect(x, this.y, stripeWidth, this.height);
+      }
+    }
+  }
+
+  darkenColor(col, amount) {
+    let c = color(col);
+    return color(
+      max(red(c) - amount, 0),
+      max(green(c) - amount, 0),
+      max(blue(c) - amount, 0)
+    );
   }
 }
 
-function subdivideRect(rect) {
-  let subdivideChance = map(rect.width * rect.height, 0, w * h, 0.1, 0.9);
-  if (
-    random() > subdivideChance ||
-    rect.width < minSize ||
-    rect.height < minSize
-  ) {
+function subdivideRect(rect, divisions) {
+  if (rect.width < minSize * divisions || rect.height < minSize * divisions) {
     return [rect];
   }
 
-  let rectOne, rectTwo;
-  let breakPoint;
+  let newRects = [];
   let dir = rect.width > rect.height ? "width" : "height";
+  let totalSize = dir === "width" ? rect.width : rect.height;
+  let position = dir === "width" ? rect.x : rect.y;
 
-  if (dir === "height" && rect.height >= minSize) {
-    breakPoint = rect.y + Math.random() * (rect.height - minSize) + minSize / 2;
-    rectOne = new Rectangle(
-      rect.x,
-      rect.y,
-      rect.width,
-      breakPoint - rect.y,
-      "red"
-    );
-    rectTwo = new Rectangle(
-      rect.x,
-      breakPoint,
-      rect.width,
-      rect.y + rect.height - breakPoint,
-      "red"
-    );
-  } else if (dir === "width" && rect.width >= minSize) {
-    breakPoint = rect.x + Math.random() * (rect.width - minSize) + minSize / 2;
-    rectOne = new Rectangle(
-      rect.x,
-      rect.y,
-      breakPoint - rect.x,
-      rect.height,
-      "red"
-    );
-    rectTwo = new Rectangle(
-      breakPoint,
-      rect.y,
-      rect.x + rect.width - breakPoint,
-      rect.height,
-      "red"
-    );
-  } else {
-    return [rect];
+  // Calculate sizes for all divisions
+  let sizes = [];
+  let remainingSize = totalSize;
+  for (let i = 0; i < divisions; i++) {
+    let size;
+    if (i === divisions - 1) {
+      size = remainingSize;
+    } else {
+      size = max(
+        minSize,
+        min(
+          remainingSize - (divisions - i - 1) * minSize,
+          random(minSize, remainingSize / 2)
+        )
+      );
+    }
+    sizes.push(size);
+    remainingSize -= size;
   }
 
-  return [...subdivideRect(rectOne), ...subdivideRect(rectTwo)];
+  // Create rectangles based on calculated sizes
+  for (let size of sizes) {
+    let newRect;
+    if (dir === "width") {
+      newRect = new Rectangle(position, rect.y, size, rect.height, "red");
+      position += size;
+    } else {
+      newRect = new Rectangle(rect.x, position, rect.width, size, "red");
+      position += size;
+    }
+    newRects.push(newRect);
+  }
+
+  return newRects;
 }
 
-function subdivideRectArray(rects) {
+function subdivideRectArray(rects, step) {
   let newRects = [];
   for (let rect of rects) {
-    newRects.push(...subdivideRect(rect));
+    let maxDivisions = min(floor(max(rect.width, rect.height) / minSize), 10);
+    let divisions = floor(random(2, min(step + 3, maxDivisions)));
+    newRects.push(...subdivideRect(rect, divisions));
   }
   return newRects;
 }
@@ -161,21 +190,17 @@ function subdivideRectArray(rects) {
 function setup() {
   createCanvas(w, h);
   background("#f5ebe0");
-  // stroke("white");
-  // strokeWeight(3);
 
-  let rects = [];
-  rects.push(new Rectangle(0, 0, w, h, "red"));
+  let rects = [new Rectangle(0, 0, w, h, "red")];
 
   for (let step = 0; step < divisionSteps; step++) {
-    rects = subdivideRectArray(rects);
+    rects = subdivideRectArray(rects, step);
   }
 
-  let r = Math.floor(random(colorPalettes.length - 1));
+  let r = floor(random(colorPalettes.length));
   let palette = colorPalettes[r];
 
   for (let i = 0; i < rects.length; i++) {
-    // console.log("RECT :: ", rects[i]);
-    rects[i].draw(palette[Math.floor(random(palette.length - 1))]);
+    rects[i].draw(palette[floor(random(palette.length))]);
   }
 }

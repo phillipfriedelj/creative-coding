@@ -158,24 +158,68 @@ function subdivideRectArray(rects) {
   return newRects;
 }
 
+// function setup() {
+//   createCanvas(w, h);
+//   background("#f5ebe0");
+//   // stroke("white");
+//   // strokeWeight(3);
+
+//   let rects = [];
+//   rects.push(new Rectangle(0, 0, w, h, "red"));
+
+//   for (let step = 0; step < divisionSteps; step++) {
+//     rects = subdivideRectArray(rects);
+//   }
+
+//   let r = Math.floor(random(colorPalettes.length - 1));
+//   let palette = colorPalettes[r];
+
+//   for (let i = 0; i < rects.length; i++) {
+//     // console.log("RECT :: ", rects[i]);
+//     rects[i].draw(palette[Math.floor(random(palette.length - 1))]);
+//   }
+// }
+
 function setup() {
   createCanvas(w, h);
   background("#f5ebe0");
-  // stroke("white");
-  // strokeWeight(3);
+  noStroke();
 
-  let rects = [];
-  rects.push(new Rectangle(0, 0, w, h, "red"));
+  let rects = [new Rectangle(0, 0, w, h, "red")];
 
   for (let step = 0; step < divisionSteps; step++) {
     rects = subdivideRectArray(rects);
   }
 
-  let r = Math.floor(random(colorPalettes.length - 1));
+  let r = floor(random(colorPalettes.length));
   let palette = colorPalettes[r];
 
   for (let i = 0; i < rects.length; i++) {
-    // console.log("RECT :: ", rects[i]);
-    rects[i].draw(palette[Math.floor(random(palette.length - 1))]);
+    let currRect = rects[i];
+    let noiseVal = noise(currRect.x * 0.01, currRect.y * 0.01);
+    let colorIndex = floor(map(noiseVal, 0, 1, 0, palette.length));
+    let c = color(palette[colorIndex]);
+
+    // Add depth effect
+    fill(c);
+    rect(currRect.x, currRect.y, currRect.width, currRect.height);
+    fill(0, 20);
+    rect(
+      currRect.x + 5,
+      currRect.y + 5,
+      currRect.width - 5,
+      currRect.height - 5
+    );
+
+    // Occasionally add a circle
+    if (random() < 0.1) {
+      fill(c, 5);
+      let size = min(currRect.width, currRect.height) * 0.8;
+      ellipse(
+        currRect.x + currRect.width / 2,
+        currRect.y + currRect.height / 2,
+        size
+      );
+    }
   }
 }
