@@ -1,6 +1,6 @@
 let w = window.innerWidth - 20;
 let h = window.innerHeight - 20;
-const divisionSteps = 100;
+const divisionSteps = 20;
 const minSize = 15;
 
 let colorPalettes = [
@@ -203,23 +203,23 @@ function setup() {
     // Add depth effect
     fill(c);
     rect(currRect.x, currRect.y, currRect.width, currRect.height);
-    fill(0, 20);
-    rect(
-      currRect.x + 5,
-      currRect.y + 5,
-      currRect.width - 5,
-      currRect.height - 5
-    );
+    // fill(0, 20);
+    // rect(
+    //   currRect.x + 5,
+    //   currRect.y + 5,
+    //   currRect.width - 5,
+    //   currRect.height - 5
+    // );
 
-    // Occasionally add a circle
-    if (random() < 0.1) {
-      fill(c, 5);
-      let size = min(currRect.width, currRect.height) * 0.8;
-      ellipse(
-        currRect.x + currRect.width / 2,
-        currRect.y + currRect.height / 2,
-        size
-      );
-    }
+    // // Occasionally add a circle
+    // if (random() < 0.1) {
+    //   fill(c, 5);
+    //   let size = min(currRect.width, currRect.height) * 0.8;
+    //   ellipse(
+    //     currRect.x + currRect.width / 2,
+    //     currRect.y + currRect.height / 2,
+    //     size
+    //   );
+    // }
   }
 }

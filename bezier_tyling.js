@@ -67,7 +67,7 @@ function drawTile(x, y, width, height, colorPalette) {
   let endPointX;
   let endPointY;
 
-  stroke(randColor);
+  stroke("blue");
   //   stroke("blue");
 
   if (direction === "left") {
@@ -84,14 +84,14 @@ function drawTile(x, y, width, height, colorPalette) {
     endPointX = startPointX + width;
     endPointY = startPointY + height;
 
-    // drawQuadraticVertex(
-    //   startPointX,
-    //   startPointY,
-    //   endPointX,
-    //   endPointY,
-    //   bezPointX1,
-    //   bezPointY1
-    // );
+    drawQuadraticVertex(
+      startPointX,
+      startPointY,
+      endPointX,
+      endPointY,
+      bezPointX1,
+      bezPointY1
+    );
 
     drawBezierLine(
       startPointX,
@@ -128,14 +128,14 @@ function drawTile(x, y, width, height, colorPalette) {
       bezPointY2
     );
 
-    // drawQuadraticVertex(
-    //   startPointX,
-    //   startPointY,
-    //   endPointX,
-    //   endPointY,
-    //   bezPointX1,
-    //   bezPointY1
-    // );
+    drawQuadraticVertex(
+      startPointX,
+      startPointY,
+      endPointX,
+      endPointY,
+      bezPointX1,
+      bezPointY1
+    );
   }
 
   //   stroke("black");
@@ -154,7 +154,7 @@ function setup() {
   createCanvas(size, size);
   background("white");
   stroke("white");
-  strokeWeight(3);
+  strokeWeight(4);
 
   //   slider = createSlider(3, 100, 20, 1);
   //   slider.position(10, 10);
@@ -162,15 +162,15 @@ function setup() {
 
   //   step = slider.value();
   //   steps = random(10, 150);
-  let steps = 150;
+  let steps = 100;
   stepSizeX = width / steps;
   stepSizeY = height / steps;
 
   //   let colors = colorPalettes[floor(random(0, colorPalettes.length))];
   //   let colors = ["#00072d", "#001c55", "#0a2472", "#0e6ba8", "#a6e1fa"];
-  //   let colors = ["#250902", "#38040e", "#640d14", "#800e13", "#ad2831"];
-  //   let colors = ["#e5d9f2", "#f5efff", "#cdc1ff", "#a594f9", "#7371fc"];
-  let colors = ["#f08080", "#f4978e", "#f8ad9d", "#fbc4ab", "#ffdab9"];
+  let colors = ["#250902", "#38040e", "#640d14", "#800e13", "#ad2831"];
+  // let colors = ["#e5d9f2", "#f5efff", "#cdc1ff", "#a594f9", "#7371fc"];
+  // let colors = ["#f08080", "#f4978e", "#f8ad9d", "#fbc4ab", "#ffdab9"];
   console.log("COLORS ", colors);
 
   for (let x = 0; x < steps; x++) {

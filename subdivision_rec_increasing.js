@@ -1,7 +1,7 @@
 let w = window.innerWidth - 20;
 let h = window.innerHeight - 20;
-const divisionSteps = 500;
-const minSize = 5;
+const divisionSteps = 100;
+const minSize = 15;
 
 let colorPalettes = [
   ["#ccd5ae", "#e9edc9", "#faedcd", "#d4a373"],
