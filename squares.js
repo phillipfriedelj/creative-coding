@@ -1,5 +1,5 @@
 let size = 800;
-let squareCount = 20;
+let squareCount = 10;
 let spacing = 5;
 
 let colorPalettes = [
